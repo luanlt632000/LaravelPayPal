@@ -27,11 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::group(['prefix' => 'paypal'], function () {
+        Route::get('/', [PayPalController::class, 'index'])->name('paypal');
+        Route::get('/payment/success', [PayPalController::class, 'paymentSuccess'])->name('paypal.payment.success');
+        Route::get('/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('paypal.payment/cancel');
+    });
 });
 
-Route::get('paypal', [PayPalController::class, 'index'])->name('paypal');
-Route::get('paypal/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
-Route::get('paypal/payment/success', [PayPalController::class, 'paymentSuccess'])->name('paypal.payment.success');
-Route::get('paypal/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('paypal.payment/cancel');
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

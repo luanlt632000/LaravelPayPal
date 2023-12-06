@@ -44,3 +44,5 @@ Route::get('invoices', function () {
         $inv
     );
 })->name('payment.invoices');
+
+Route::get('/paypal/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
