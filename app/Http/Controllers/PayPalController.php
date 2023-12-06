@@ -15,24 +15,36 @@ class PayPalController extends Controller
         [
             'id' => 1,
             'item' => [
-                'name' => 'photo',
-                'sku' => 'photo001',
-                'quantity' => '3',
+                'name' => 'Laptop',
+                'sku' => 'L001',
+                'quantity' => '1',
                 'unit_amount' => [
                     'currency_code' => 'USD',
-                    'value' => '10',
+                    'value' => '1000',
                 ],
             ]
         ],
         [
             'id' => 2,
             'item' => [
-                'name' => 'oto',
-                'sku' => 'oto001',
-                'quantity' => '2',
+                'name' => 'iPad',
+                'sku' => 'I001',
+                'quantity' => '1',
                 'unit_amount' => [
                     'currency_code' => 'USD',
-                    'value' => '10',
+                    'value' => '500',
+                ],
+            ]
+        ],
+        [
+            'id' => 3,
+            'item' => [
+                'name' => 'Dep Laos',
+                'sku' => 'D001',
+                'quantity' => '1',
+                'unit_amount' => [
+                    'currency_code' => 'USD',
+                    'value' => '100',
                 ],
             ]
         ],
@@ -47,17 +59,15 @@ class PayPalController extends Controller
      */
     public function index(Request $request)
     {
-        // $provider = new PayPalClient;
-        // $provider->setApiCredentials(config('paypal'));
-        // $provider->getAccessToken();
+        $orders = Payment::all();
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $paypalToken = $provider->getAccessToken();
 
-        // $id_order = session('paypal_payment_id');
-        // $detail = $id_order ? json_encode($provider->showOrderDetails($id_order)) : null;
-        // if($id_order){
-        //     dd(session('paypal_payment_id'));
-        // }
-        // dd($id_order);
-        return view('paypal', ['user' => $request->user()]);
+        foreach( $orders as $order ){
+            $order['data'] = json_encode($provider->showOrderDetails($order['id_order']));
+        }
+        return view('paypal', ['user' => $request->user(), 'orders' => $orders ?? []]);
     }
 
     /**
@@ -119,7 +129,7 @@ class PayPalController extends Controller
 
             foreach ($order['links'] as $links) {
                 if ('approve' == $links['rel']) {
-                    Payment::create(['user_id'=>$user_id, 'id_order'=>$order['id'], 'status'=>'pending']);
+                    Payment::create(['user_id' => $user_id, 'id_order' => $order['id'], 'status' => 'pending']);
                     return redirect()->away($links['href']);
                 }
             }
@@ -162,13 +172,13 @@ class PayPalController extends Controller
         $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($token);
 
-        
+
         $order = Payment::where('id_order', $token)->first();
         $order['status'] = 'success';
         $order->save();
 
         if (isset($response['status']) && 'COMPLETED' == $response['status']) {
-            return redirect(route('paypal'))->with(['success', 'Transaction complete.']);
+            return redirect(route('paypal'))->with('success', 'Transaction complete.');
         } else {
             return redirect(route('paypal'))
                 ->with('error', $response['message'] ?? 'Something went wrong.');
