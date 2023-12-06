@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\PayPalService as PayPalSvc;
+use Illuminate\Http\Request;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalController extends Controller
@@ -31,7 +29,7 @@ class PayPalController extends Controller
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
 
-        $response = $provider->createOrder([
+        $order = $provider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
                 "return_url" => route('paypal.payment.success'),
@@ -39,18 +37,52 @@ class PayPalController extends Controller
             ],
             "purchase_units" => [
                 0 => [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => "100.00"
-                    ]
-                ]
-            ]
+                    'amount' => [
+                        'currency_code' => 'EUR',
+                        'value' => '5',
+                        "breakdown" => [
+                            "item_total" => [
+                                "currency_code" => "EUR", "value" => "5",
+                            ],
+                            "shipping" => [
+                                "currency_code" => "EUR", "value" => "0",
+                            ],
+                            "tax_total" => [
+                                "currency_code" => "EUR", "value" => "0",
+                            ],
+                            "discount" => [
+                                "currency_code" => "EUR", "value" => "0",
+                            ],
+                        ],
+                    ],
+                    'items' => [
+                        [
+                            'name' => 'photo',
+                            'sku' => 'photo001',
+                            'quantity' => '3',
+                            'unit_amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '1.00',
+                            ],
+                        ],
+                        [
+                            'name' => 'oto',
+                            'sku' => 'oto001',
+                            'quantity' => '2',
+                            'unit_amount' => [
+                                'currency_code' => 'EUR',
+                                'value' => '1.00',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
+        dd($order);
+        if (isset($order['id']) && null != $order['id']) {
 
-        if (isset($response['id']) && $response['id'] != null) {
-
-            foreach ($response['links'] as $links) {
-                if ($links['rel'] == 'approve') {
+            foreach ($order['links'] as $links) {
+                if ('approve' == $links['rel']) {
                     return redirect()->away($links['href']);
                 }
             }
@@ -58,8 +90,11 @@ class PayPalController extends Controller
             return redirect(route('cancel.payment'))->with('error', 'Something went wrong.');
 
         } else {
+            return response([
+                $order['message'] ?? 'Something went wrong.',
+            ]);
             return redirect(route('create.payment'))
-                ->with('error', $response['message'] ?? 'Something went wrong.');
+                ->with('error', $order['message'] ?? 'Something went wrong.');
         }
 
     }
@@ -87,7 +122,7 @@ class PayPalController extends Controller
         $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($request['token']);
 
-        if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+        if (isset($response['status']) && 'COMPLETED' == $response['status']) {
             return redirect(route('paypal'))->with('success', 'Transaction complete.');
         } else {
             return redirect(route('paypal'))
