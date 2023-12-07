@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::group(['prefix' => 'paypal'], function () {
         Route::get('/', [PayPalController::class, 'index'])->name('paypal');
+        Route::get('/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
         Route::get('/payment/success', [PayPalController::class, 'paymentSuccess'])->name('paypal.payment.success');
         Route::get('/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('paypal.payment/cancel');
     });

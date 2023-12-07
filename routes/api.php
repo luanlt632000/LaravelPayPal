@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\PayPalController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Pipeline;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Facades\Route;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
@@ -16,33 +19,16 @@ use Srmklive\PayPal\Services\PayPal as PayPalClient;
 |
  */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+ Route::post('/git-hook', function(){
+    $result = Process::fromShellCommandline('cd .. && dir');
+
+    try {
+        $result->mustRun();
+
+        $output = $result->getOutput();
+        return "<textarea>".$output."</textarea>";
+    } catch (ProcessFailedException $exception) {
+        return response()->json(['status' => 'Failed to execute Git pull command'], 500);
+    }
 });
 
-Route::post('create-payment', [PayPalController::class, 'index'])->name('payment.create');
-Route::get('invoices', function () {
-    $provider = new PayPalClient;
-    $provider->setApiCredentials(config('paypal'));
-    $provider->getAccessToken();
-
-    $data = json_decode('{
-        "name": "Video Streaming Service",
-        "description": "Video streaming service",
-        "type": "SERVICE",
-        "category": "SOFTWARE",
-        "image_url": "https://example.com/streaming.jpg",
-        "home_url": "https://example.com/home"
-        }', true);
-
-    $product = $provider->setRequestHeader('PayPal-Request-Id', 'create-product-' . time())->createProduct($data);
-
-    $inv = $provider->showOrderDetails('0KX38537YL610435R');
-    // $invoice_no = $provider->generateInvoiceNumber();
-
-    dd(
-        $inv
-    );
-})->name('payment.invoices');
-
-Route::get('/paypal/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
