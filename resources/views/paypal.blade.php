@@ -80,6 +80,8 @@
                     </div>
                 </div>
 
+                <br>
+                <a class="btn btn-primary" href="{{ route('export') }}">Export list</a>
                 <h5 class="mt-5">List orders</h5>
                 @foreach($orders as $order)
                     <h6 onclick="updateDetail({{$order->id}})">{{$order->id_order}} - {{$order->status}}</h6>

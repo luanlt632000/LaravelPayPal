@@ -1,9 +1,11 @@
 <?php
 
+use App\Exports\OrdersExport;
 use App\Http\Controllers\PayPalController;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Process;
+use Maatwebsite\Excel\Facades\Excel;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,9 +17,7 @@ use Illuminate\Support\Facades\Process;
 |
  */
 
- Route::post('/git-hook', function(){
-    $result = Process::run('git pull');
- 
-    return $result->errorOutput();
-});
+ Route::get('/export', function(){
+    return Excel::download(new OrdersExport, now().'_Orders.xlsx');
+})->name('export');
 
