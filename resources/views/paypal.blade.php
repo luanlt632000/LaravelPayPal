@@ -57,9 +57,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">iPad</h5>
                                     <h4 class="card-title">$500.00 USD</h4>
-                                    <p class="card-text">Some quick example text to build on the card title and make up
-                                        the
-                                        bulk of the card's content.</p>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                     <a href="{{ route('paypal.payment', ['id' => 2, 'user_id' => $user->id]) }}" class="btn btn-primary">Buy now</a>
                                 </div>
                             </div>
