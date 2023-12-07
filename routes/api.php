@@ -2,12 +2,8 @@
 
 use App\Http\Controllers\PayPalController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Pipeline;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Facades\Route;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-
+use Illuminate\Support\Facades\Process;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,15 +16,8 @@ use Srmklive\PayPal\Services\PayPal as PayPalClient;
  */
 
  Route::post('/git-hook', function(){
-    $result = Process::fromShellCommandline('cd .. && dir');
-
-    try {
-        $result->mustRun();
-
-        $output = $result->getOutput();
-        return "<textarea>".$output."</textarea>";
-    } catch (ProcessFailedException $exception) {
-        return response()->json(['status' => 'Failed to execute Git pull command'], 500);
-    }
+    $result = Process::run('git pull');
+ 
+    return $result->errorOutput();
 });
 
