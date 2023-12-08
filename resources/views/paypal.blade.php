@@ -35,10 +35,10 @@
                             </div>
                         @endif
 
-                        <div class="d-flex">
+                        <div class="d-flex justify-content-between">
                             <div class="card m-1" style="width: 18rem;">
                                 <div class="h-75">
-                                    <img src="https://cdn.tgdd.vn/Files/2022/07/07/1445532/laptop-like-new-99-la-gi-co-tot-khong-co-nen-1.jpg" class="card-img-top" alt="...">
+                                    <img style="height: 100%" src="https://cdn.tgdd.vn/Files/2022/07/07/1445532/laptop-like-new-99-la-gi-co-tot-khong-co-nen-1.jpg" class="card-img-top" alt="...">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Laptop</h5>
@@ -52,7 +52,7 @@
 
                             <div class="card m-1" style="width: 18rem;">
                                 <div class="h-75">
-                                    <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:80/plain/https://cellphones.com.vn/media/catalog/product/1/_/1_253_7.jpg" class="card-img-top" alt="...">
+                                    <img style="height: 100%" src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:80/plain/https://cellphones.com.vn/media/catalog/product/1/_/1_253_7.jpg" class="card-img-top" alt="...">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">iPad</h5>
@@ -64,7 +64,7 @@
 
                             <div class="card m-1" style="width: 18rem;">
                                 <div class="h-75">
-                                    <img src="https://chosathaiphong.com/wp-content/uploads/2018/04/dep-tong-lao-1.jpg" class="card-img-top" alt="...">
+                                    <img style="height: 100%" src="https://chosathaiphong.com/wp-content/uploads/2018/04/dep-tong-lao-1.jpg" class="card-img-top" alt="...">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Dep Lao's</h5>
